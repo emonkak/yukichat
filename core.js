@@ -24,6 +24,9 @@
 //     OTHER DEALINGS IN THE SOFTWARE.
 // }}}
 
+
+
+
 const CHAT_SERVER = "yuki"
 
 
@@ -36,7 +39,13 @@ function connect_yuki() {
 
 
 function post_message(user, message) {
-  $.post(CHAT_SERVER, 'user=' + user + '&message=' + message);
+  $.ajax({
+    type: 'POST',
+    contentType: 'application/x-www-form-urlencoded; charset=utf-8',
+    url: CHAT_SERVER,
+    dataType: 'text',
+    data:{user: user, message: message}
+  });
 }
 
 
@@ -44,10 +53,12 @@ jQuery(function($){
   connect_yuki();
   $('#message').keypress(function(e){
     if (e.which != 13) return;
+
     var user = $('#user').val();
     var message = $('#message').val();
-    $('#message').val('');
     post_message(user, message);
+
+    $('#message').val('');
     return;
   });
   $('#post').click(function(){

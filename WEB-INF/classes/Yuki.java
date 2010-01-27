@@ -69,7 +69,7 @@ public class Yuki extends HttpServlet implements CometProcessor
 		switch (event.getEventType()) {
 		case BEGIN:
 			event.setTimeout(10 * 60 * 1000);  // Timeout in 10 minutes.
-			response.setContentType("text/plain");
+			response.setContentType("text/plain; charset=utf-8");
 
 			synchronized (connections) {
 				connections.add(response);
