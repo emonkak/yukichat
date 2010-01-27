@@ -29,7 +29,7 @@ const CHAT_SERVER = "yuki"
 
 function connect_yuki() {
   $.get(CHAT_SERVER, function(data){
-    $('#section').append($('<p />').text(data))
+    $('#section').prepend($('<p />').text(data))
     connect_yuki();
   });
 }
@@ -42,6 +42,13 @@ function post_message(user, message) {
 
 jQuery(function($){
   connect_yuki();
+  $('#message').keypress(function(e){
+    if (e.which != 13) return;
+    var user = $('#user').val();
+    var message = $('#message').val();
+    post_message(user, message);
+    return;
+  });
   $('#post').click(function(){
     var user = $('#user').val();
     var message = $('#message').val();
