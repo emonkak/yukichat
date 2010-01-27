@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<web-app>
+
+  <servlet>
+    <servlet-name>Yuki</servlet-name>
+    <servlet-class>Yuki</servlet-class>
+  </servlet>
+
+  <servlet-mapping>
+    <servlet-name>Yuki</servlet-name>
+    <url-pattern>/yuki</url-pattern>
+  </servlet-mapping>
+
+</web-app>
