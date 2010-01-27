@@ -1,6 +1,6 @@
 // yukichat, the chat servlet that used comet.
 // Version: 0.0.0
-// Copyright (C) 2010 emon <http://github.com/emonkak>
+// Copyright (C) 2010 emonkak <http://github.com/emonkak>
 // License: MIT license  {{{
 //     Permission is hereby granted, free of charge, to any person
 //     obtaining a copy of this software and associated documentation
@@ -56,7 +56,7 @@ public class Yuki extends HttpServlet implements CometProcessor
 		HttpServletRequest request = event.getHttpServletRequest();
 		HttpServletResponse response = event.getHttpServletResponse();
 
-		// When it is post request, notice all users and close connections.
+		// When it is post request, notice all clients and close connection.
 		if (request.getMethod().equals("POST")) {
 			String user = request.getParameter("user");
 			String message = request.getParameter("message");
@@ -97,7 +97,6 @@ public class Yuki extends HttpServlet implements CometProcessor
 	{
 		for (HttpServletResponse connect : connections) {
 			PrintWriter writer = connect.getWriter();
-
 			writer.println(user + "> " + message);
 			writer.flush();
 			writer.close();

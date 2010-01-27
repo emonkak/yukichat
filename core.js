@@ -46,6 +46,7 @@ jQuery(function($){
     if (e.which != 13) return;
     var user = $('#user').val();
     var message = $('#message').val();
+    $('#message').val('');
     post_message(user, message);
     return;
   });
