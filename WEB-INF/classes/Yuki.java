@@ -23,9 +23,7 @@
 //     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 //     OTHER DEALINGS IN THE SOFTWARE.
 // }}}
-
-
-// Import  {{{
+// Import  {{{1
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -35,33 +33,65 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
-//import net.arnx.jsonic.JSON;
 import org.apache.catalina.CometEvent;
 import org.apache.catalina.CometProcessor;
 
-// }}}
+import net.arnx.jsonic.JSON;
 
 
 
+
+// Core  {{{1
 
 public class Yuki extends HttpServlet implements CometProcessor
 {
 	private ArrayList<HttpServletResponse> connections =
 		new ArrayList<HttpServletResponse>();
 
-	public void event(CometEvent event)
+
+	private class Chat  //{{{
+	{
+		public String nickname;
+		public String message;
+
+		Chat(String nickname, String message)
+		{
+			this.nickname = nickname;
+			this.message = message;
+		}
+	}  //}}}
+
+
+	private void publish(String nickname, String message)  //{{{
+		throws IOException
+	{
+		synchronized (connections) {
+			for (HttpServletResponse connect : connections) {
+				PrintWriter writer = connect.getWriter();
+				writer.println(JSON.encode(new Chat(nickname, message)));
+				writer.flush();
+				writer.close();
+			}
+		}
+	}  //}}}
+
+
+	public void event(CometEvent event)  //{{{
 		throws IOException, ServletException
 	{
 		HttpServletRequest request = event.getHttpServletRequest();
 		HttpServletResponse response = event.getHttpServletResponse();
 
-		// When it is post request, notice all clients and close connection.
+		// When it is post request, publish and close connection.
 		if (request.getMethod().equals("POST")) {
-			String user = request.getParameter("user");
+			String nickname = request.getParameter("nickname");
 			String message = request.getParameter("message");
 
-			pushClients(user, message);
+			if (!message.isEmpty())
+				publish(nickname, message);
+
 			event.close();
 			return;
 		}
@@ -69,7 +99,7 @@ public class Yuki extends HttpServlet implements CometProcessor
 		switch (event.getEventType()) {
 		case BEGIN:
 			event.setTimeout(10 * 60 * 1000);  // Timeout in 10 minutes.
-			response.setContentType("text/plain; charset=utf-8");
+			response.setContentType("application/json; charset=utf-8");
 
 			synchronized (connections) {
 				connections.add(response);
@@ -87,23 +117,16 @@ public class Yuki extends HttpServlet implements CometProcessor
 			}
 			event.close();
 			break;
-		case READ:
-			break;
 		}
-	}
+	}  //}}}
 
-	private void pushClients(String user, String message)
-		throws IOException
+
+	public void destroy()  //{{{
 	{
-		for (HttpServletResponse connect : connections) {
-			PrintWriter writer = connect.getWriter();
-			writer.println(user + "> " + message);
-			writer.flush();
-			writer.close();
+		connections.clear();
+	}  //}}}
 
-			connect.flushBuffer();
-		}
-	}
+
 }
 
 

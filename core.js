@@ -27,44 +27,60 @@
 
 
 
-const CHAT_SERVER = "yuki"
+var CHAT_SERVER = "yuki";
 
 
-function connect_yuki() {
-  $.get(CHAT_SERVER, function(data){
-    $('#section').prepend($('<p />').text(data))
-    connect_yuki();
+function error(msg) {
+  $('#chat').prepend($('<p/>').text("error> " + msg).css('color', 'red'))
+}
+
+
+function long_polling() {
+  $.ajax({
+    cache: false,
+    type: 'GET',
+    url: CHAT_SERVER,
+    success: function(data){
+      if (!data) {
+        setTimeout("long_polling()", 1000)
+        return;
+      }
+      $('#chat').prepend($('<p/>').text(data.nickname + "> " + data.message));
+      long_polling();
+    },
+    error: function(_, msg){
+      error('long_polling');
+    }
   });
 }
 
 
-function post_message(user, message) {
+function post_message() {
+  var nickname = $('#nickname').val();
+  var message = $('#message').val();
+  if (nickname == '' || message == '') return;
   $.ajax({
-    type: 'POST',
+    cache: false,
     contentType: 'application/x-www-form-urlencoded; charset=utf-8',
-    url: CHAT_SERVER,
+    data: {nickname: nickname, message: message},
     dataType: 'text',
-    data:{user: user, message: message}
+    type: 'POST',
+    url: CHAT_SERVER,
+    success: function(data){
+      $('#message').val('');
+    },
+    error: function(_, msg){
+      error('post_message');
+    }
   });
 }
 
 
 jQuery(function($){
-  connect_yuki();
+  long_polling();
   $('#message').keypress(function(e){
-    if (e.which != 13) return;
-
-    var user = $('#user').val();
-    var message = $('#message').val();
-    post_message(user, message);
-
-    $('#message').val('');
-    return;
-  });
-  $('#post').click(function(){
-    var user = $('#user').val();
-    var message = $('#message').val();
-    post_message(user, message);
+    if (e.which == 13)
+      post_message();
   });
 });
 
