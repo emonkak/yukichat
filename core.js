@@ -30,57 +30,64 @@
 var CHAT_SERVER = "yuki";
 
 
-function error(msg) {
-  $('#chat').prepend($('<p/>').text("error> " + msg).css('color', 'red'))
+function add_message(user, message) {
+  $('#section').append(
+    $('<tr/>')
+    .addClass($('#section tr').length % 2 == 0 ? 'even' : 'odd')
+    .append($('<td/>').addClass('user').text(user))
+    .append($('<td/>').addClass('message').text(message))
+  );
+  var targetOffset = $('#section tr').last().offset().top;
+  $('html').animate({scrollTop: targetOffset}, 1000);
 }
 
 
-function long_polling() {
+function polling() {
   $.ajax({
     cache: false,
     type: 'GET',
     url: CHAT_SERVER,
     success: function(data){
       if (!data) {
-        setTimeout("long_polling()", 1000)
+        setTimeout("polling()", 1000)
         return;
       }
-      $('#chat').prepend($('<p/>').text(data.nickname + "> " + data.message));
-      long_polling();
+      add_message(data.user, data.message);
+      polling();
     },
-    error: function(_, msg){
-      error('long_polling');
+    error: function(){
+      add_message('error', 'polling() faild!');
     }
   });
 }
 
 
-function post_message() {
-  var nickname = $('#nickname').val();
+function publish() {
+  var user = $('#user').val();
   var message = $('#message').val();
-  if (nickname == '' || message == '') return;
+  if (user === '' && message === '') return;
   $.ajax({
     cache: false,
     contentType: 'application/x-www-form-urlencoded; charset=utf-8',
-    data: {nickname: nickname, message: message},
+    data: {user: user, message: message},
     dataType: 'text',
     type: 'POST',
     url: CHAT_SERVER,
     success: function(data){
       $('#message').val('');
     },
-    error: function(_, msg){
-      error('post_message');
+    error: function(){
+      add_message('error', 'publish() faild!');
     }
   });
 }
 
 
 jQuery(function($){
-  long_polling();
+  polling();
   $('#message').keypress(function(e){
     if (e.which == 13)
-      post_message();
+      publish();
   });
 });
 

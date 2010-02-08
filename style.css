@@ -1,0 +1,81 @@
+body {
+  margin: 0px;
+  color: #202020;
+  background: #f0f0f0;
+}
+
+/* Header */
+
+#header {
+  background: #202020;
+  color: #c0c0c0;
+  height: 24px;
+  left: 0px;
+  padding: 4px;
+  position: fixed;
+  top: 0px;
+  width: 100%;
+}
+
+
+/* Content */
+
+#content {
+  margin-top: 32px;
+}
+
+
+#section {
+  width: 100%;
+  border-collapse: collapse;
+  border-top: 1px solid #c0c0c0;
+  border-bottom: 1px solid #c0c0c0;
+}
+
+#section tr.header {
+  background: #c0c0c0;
+  border: 1px solid #a0a0a0;
+}
+
+#section th.user {
+  width: 100px;
+  border-right: 1px solid #a0a0a0;
+  padding: 4px;
+  text-align: right;
+}
+
+#section th.message {
+  padding: 4px;
+  text-align: left;
+}
+
+
+#section tr.odd td.message {
+  background: #f0f0f0;
+}
+
+#section tr.even td.message {
+  background: #e0e0e0;
+}
+
+#section td.user {
+  background: #d0f0f0;
+  border-right: 1px solid #a0c0c0;
+  padding: 4px;
+  text-align: right;
+}
+
+#section td.message {
+  border-right: 1px solid #c0c0c0;
+  border-bottom: 1px solid #c0c0c0;
+  padding: 4px;
+  text-align: left;
+}
+
+
+/* Footer */
+
+#footer {
+  color: #808080;
+  text-align: center;
+}

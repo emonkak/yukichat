@@ -49,48 +49,49 @@ public class Yuki extends HttpServlet implements CometProcessor
 {
 	private ArrayList<HttpServletResponse> connections =
 		new ArrayList<HttpServletResponse>();
+	private ArrayList<String> users = new ArrayList<String>();
 
 
-	private class Chat  //{{{
+	private class Chat
 	{
-		public String nickname;
+		public String user;
 		public String message;
 
-		Chat(String nickname, String message)
+		Chat(String user, String message)
 		{
-			this.nickname = nickname;
+			this.user = user;
 			this.message = message;
 		}
-	}  //}}}
+	}
 
 
-	private void publish(String nickname, String message)  //{{{
+	private void publish(String user, String message)
 		throws IOException
 	{
 		synchronized (connections) {
 			for (HttpServletResponse connect : connections) {
 				PrintWriter writer = connect.getWriter();
-				writer.println(JSON.encode(new Chat(nickname, message)));
+				writer.println(JSON.encode(new Chat(user, message)));
 				writer.flush();
 				writer.close();
 			}
 		}
-	}  //}}}
+	}
 
 
-	public void event(CometEvent event)  //{{{
+	public void event(CometEvent event)
 		throws IOException, ServletException
 	{
 		HttpServletRequest request = event.getHttpServletRequest();
 		HttpServletResponse response = event.getHttpServletResponse();
 
-		// When it is post request, publish and close connection.
+		// When it is post method, publish and close connection.
 		if (request.getMethod().equals("POST")) {
-			String nickname = request.getParameter("nickname");
+			String user = request.getParameter("user");
 			String message = request.getParameter("message");
 
-			if (!message.isEmpty())
-				publish(nickname, message);
+			if (!user.isEmpty() && !message.isEmpty())
+				publish(user, message);
 
 			event.close();
 			return;
@@ -98,19 +99,14 @@ public class Yuki extends HttpServlet implements CometProcessor
 
 		switch (event.getEventType()) {
 		case BEGIN:
-			event.setTimeout(10 * 60 * 1000);  // Timeout in 10 minutes.
 			response.setContentType("application/json; charset=utf-8");
 
 			synchronized (connections) {
 				connections.add(response);
 			}
+			
 			break;
 		case END:
-			synchronized (connections) {
-				connections.remove(response);
-			}
-			event.close();
-			break;
 		case ERROR:
 			synchronized (connections) {
 				connections.remove(response);
@@ -118,15 +114,13 @@ public class Yuki extends HttpServlet implements CometProcessor
 			event.close();
 			break;
 		}
-	}  //}}}
+	}
 
 
-	public void destroy()  //{{{
+	public void destroy()
 	{
 		connections.clear();
-	}  //}}}
-
-
+	}
 }
 
 

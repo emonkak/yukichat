@@ -4,30 +4,29 @@
 
 <head>
   <title>yukichat</title>
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-  <!-- <link rel="stylesheet" href="style.css" /> -->
+  <link rel="stylesheet" href="style.css"/>
   <script type="text/javascript" src="jquery.js"></script>
   <script type="text/javascript" src="core.js"></script>
 </head>
 
 <body>
- <div id="header">
-   <h1>yukichat</h1>
- </div>
+  <div id="header">
+    name: <input type="text" id="user" size="16" />
+    message: <input type="text" id="message" size="48" />
+  </div>
 
- <div id="content">
-   <p>
-     <input type="text" id="nickname" size="16" value="YUKI.N" />
-     <input type="text" id="message" size="48" />
-   </p>
-   <div id="chat">
-   </div>
- </div>
+  <div id="content">
+    <table id="section">
+      <tr class="header">
+        <th class="user">user</th>
+        <th class="message">message</th>
+      </tr>
+    </table>
+  </div>
 
- <div id="footer">
-   <hr />
-   <p>Copyright &copy; 2010 emonkak &lt;<a href="http://github.com/emonkak">http://github.com/emonkak</a>&gt;</p>
- </div>
+  <div id="footer">
+    <p>Copyright &copy; 2010 emonkak &lt;<a href="http://github.com/emonkak">http://github.com/emonkak</a>&gt;</p>
+  </div>
 </body>
 
 </html>
